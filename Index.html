@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Sezins Kids Wear — Zebra Label</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f4f6;color:#111827;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+.app{width:min(100%,520px);margin:auto;padding:14px;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+h1{font-size:21px;margin:0 0 4px;letter-spacing:-.02em}
+.sub{font-size:12px;color:#6b7280}
+.card{background:#fff;border:1px solid #d1d5db;border-radius:14px;padding:15px;margin:12px 0}
+.status{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700;font-size:14px}
+.statusLeft{display:flex;align-items:center;min-width:0}
+.dot{width:10px;height:10px;border-radius:50%;background:#9ca3af;display:inline-block;margin-right:7px;flex:none;transition:background .2s,box-shadow .2s}
+.dot.on{background:#10b981;box-shadow:0 0 0 4px rgba(16,185,129,.16)}
+#printer{max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+label:first-of-type{margin-top:0}
+input,select{width:100%;padding:13px;border:1.5px solid #d1d5db;border-radius:10px;font-size:17px;font-family:inherit;outline:none;background:#fff;color:inherit;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:#111827;box-shadow:0 0 0 3px rgba(17,24,39,.08)}
+select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+button{width:100%;min-height:48px;border:0;border-radius:10px;font-size:15px;font-weight:800;font-family:inherit;margin-top:10px;cursor:pointer;transition:transform .06s,opacity .15s}
+button:active:not(:disabled){transform:scale(.985)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:#111827;color:#fff}
+.secondary{background:#e5e7eb;color:#111827}
+.row{display:flex;gap:10px}
+.col{flex:1;min-width:0}
+.row button{margin-top:0}
+.btnRow{display:flex;gap:10px;margin-top:10px}
+.msg{display:none;margin-top:11px;padding:10px 11px;border-radius:9px;font-size:13px;line-height:1.45;white-space:pre-wrap}
+.msg.show{display:block}
+.ok{background:#ecfdf5;color:#047857}
+.err{background:#fef2f2;color:#b91c1c}
+.info{background:#eff6ff;color:#1d4ed8}
+.check{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;font-weight:600;cursor:pointer}
+.check input{width:20px;height:20px;flex:none;margin:0;accent-color:#111827;padding:0}
+.previewOuter{display:flex;justify-content:center;margin:16px 0 4px}
+.preview{width:100%;max-width:340px;aspect-ratio:406/203;border:1px dashed #9ca3af;border-radius:7px;background:#fff;overflow:hidden;position:relative}
+.plabel{position:absolute;top:0;left:0;width:406px;height:203px;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;transform-origin:top left}
+.plabel .t{position:absolute;left:0;width:406px;text-align:center;line-height:1;white-space:nowrap;overflow:hidden}
+.plabel .r{position:absolute;background:#000}
+.note{font-size:11px;color:#6b7280;line-height:1.5;margin-top:12px}
+.histHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.histHead h2{font-size:13px;margin:0;letter-spacing:.04em;text-transform:uppercase;color:#6b7280}
+.hist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.hist li{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f8fafc;border:1px solid #e8ecf1;border-radius:10px;padding:10px 12px;cursor:pointer;transition:background .12s}
+.hist li:active{background:#eef2f7}
+.hist .m{min-width:0;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist .d{font-size:11px;color:#6b7280;font-weight:600;flex:none}
+.link{background:none;border:0;padding:6px 0;margin:8px 0 0;font:inherit;font-size:13px;font-weight:700;color:#6b7280;text-decoration:underline;cursor:pointer;width:100%;text-align:center;min-height:auto}
+.link:hover{color:#111827}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<main class="app">
+
+<header>
+  <h1>Sezins Kids Wear</h1>
+  <div class="sub">Fixed 2 × 1 inch label • Zebra GT820 • Android Chrome</div>
+</header>
+
+<!-- ============ PRINTER ============ -->
+<section class="card">
+  <div class="status">
+    <span class="statusLeft"><span id="dot" class="dot"></span><span id="status">Disconnected</span></span>
+    <span id="printer" class="sub">No printer</span>
+  </div>
+
+  <button id="connect" class="primary" type="button">Connect Printer</button>
+  <button id="disconnect" class="secondary" type="button" disabled>Disconnect</button>
+  <button id="pairAny" class="link" type="button">Printer not listed? Pair any USB device</button>
+
+  <div id="msg" class="msg" role="status" aria-live="polite"></div>
+  <div id="unsupported" class="msg err hidden">
+    WebUSB is not available in this browser. Open this page in Chrome on Android over an HTTPS address.
+  </div>
+</section>
+
+<!-- ============ LABEL ============ -->
+<section class="card">
+  <label for="mrp">MRP</label>
+  <input id="mrp" type="text" inputmode="decimal" maxlength="16" placeholder="e.g. ₹499" autocomplete="off">
+
+  <label for="code">Code</label>
+  <input id="code" type="text" maxlength="24" placeholder="e.g. ABCD123" autocapitalize="characters" autocomplete="off" spellcheck="false">
+
+  <div class="row">
+    <div class="col">
+      <label for="qty">Quantity</label>
+      <select id="qty">
+        <option value="1">1 label</option>
+        <option value="2" selected>2 labels</option>
+        <option value="3">3 labels</option>
+        <option value="4">4 labels</option>
+        <option value="5">5 labels</option>
+        <option value="10">10 labels</option>
+      </select>
+    </div>
+    <div class="col">
+      <label for="darkness">Darkness</label>
+      <select id="darkness">
+        <option value="15">Light (15)</option>
+        <option value="20" selected>Normal (20)</option>
+        <option value="25">Dark (25)</option>
+        <option value="30">Max (30)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="fontsize">MRP Size</label>
+      <select id="fontsize">
+        <option value="normal" selected>Standard</option>
+        <option value="large">Larger MRP</option>
+      </select>
+    </div>
+    <div class="col">
+      <label for="storeline">Bottom Line</label>
+      <select id="storeline">
+        <option value="EXCHANGE SAME DAY / NEXT DAY" selected>Exchange policy</option>
+        <option value="NO EXCHANGE / NO REFUND">No exchange</option>
+        <option value="MADE IN INDIA">Made in India</option>
+        <option value="">(none)</option>
+      </select>
+    </div>
+  </div>
+
+  <label class="check"><input type="checkbox" id="autoInc"><span>Auto-increment code after printing</span></label>
+
+  <div class="previewOuter">
+    <div class="preview" id="preview"><div class="plabel" id="plabel"></div></div>
+  </div>
+
+  <button id="print" class="primary" type="button" disabled>Print Label</button>
+
+  <div class="btnRow">
+    <button id="test" class="secondary" type="button" disabled>Test Print</button>
+    <button id="cal" class="secondary" type="button" disabled>Calibrate</button>
+  </div>
+
+  <div class="note">
+    Label canvas is fixed at 406 × 203 dots (2&quot; × 1&quot; at 203 dpi). Quantity uses
+    <code>^PQ</code>, so copies print back-to-back without wasting a gap.
+    If the ₹ symbol prints as a box, type <b>Rs.</b> instead.
+  </div>
+</section>
+
+<!-- ============ HISTORY ============ -->
+<section class="card hidden" id="histCard">
+  <div class="histHead">
+    <h2>Recent labels</h2>
+    <button id="clearHist" class="link" type="button" style="width:auto;margin:0">Clear</button>
+  </div>
+  <ul class="hist" id="histList"></ul>
+</section>
+
+<!-- ============ SHARE ============ -->
+<section class="card">
+  <div class="histHead"><h2>Share this app</h2></div>
+  <button id="saveCopy" class="secondary" type="button">Save a copy of this file</button>
+  <div class="note">
+    Saves a single HTML file you can send over WhatsApp, email or AirDrop. The other person
+    just opens it in Chrome. For the printer to work, the file must be opened from an
+    <b>https://</b> address (GitHub Pages, Netlify Drop, Cloudflare Pages — all free).
+  </div>
+</section>
+
+</main>
+
+<script>
+(() => {
+"use strict";
+
+/* ==========================================================
+   CONFIG
+   ========================================================== */
+const ZEBRA_VID  = 0x0A5F;   // Zebra Technologies
+const LABEL_W    = 406;      // 2 inch @ 203 dpi
+const LABEL_H    = 203;      // 1 inch @ 203 dpi
+const USB_CHUNK  = 4096;
+const LS_SET     = "sezins.settings.v1";
+const LS_HIST    = "sezins.history.v1";
+const MAX_HIST   = 12;
+
+/* ==========================================================
+   ELEMENTS
+   ========================================================== */
+const $ = id => document.getElementById(id);
+const el = {
+  dot:$("dot"), status:$("status"), printer:$("printer"),
+  connect:$("connect"), disconnect:$("disconnect"), pairAny:$("pairAny"),
+  msg:$("msg"), unsupported:$("unsupported"),
+  mrp:$("mrp"), code:$("code"), qty:$("qty"), darkness:$("darkness"),
+  fontsize:$("fontsize"), storeline:$("storeline"), autoInc:$("autoInc"),
+  preview:$("preview"), plabel:$("plabel"),
+  print:$("print"), test:$("test"), cal:$("cal"),
+  histCard:$("histCard"), histList:$("histList"), clearHist:$("clearHist"),
+  saveCopy:$("saveCopy")
+};
+
+const state = { device:null, endpoint:null, iface:null, busy:false };
+
+/* ==========================================================
+   SMALL HELPERS
+   ========================================================== */
+let msgTimer = null;
+function message(text, type = "info", autoHide = 0){
+  el.msg.textContent = text;
+  el.msg.className = "msg show " + type;
+  clearTimeout(msgTimer);
+  if(autoHide) msgTimer = setTimeout(() => { el.msg.className = "msg"; }, autoHide);
+}
+function clearMessage(){ el.msg.className = "msg"; }
+
+function setConnected(on){
+  el.status.textContent = on ? "Connected" : "Disconnected";
+  el.dot.className = "dot" + (on ? " on" : "");
+  el.connect.disabled    = on;
+  el.disconnect.disabled = !on;
+  el.print.disabled      = !on || state.busy;
+  el.test.disabled       = !on || state.busy;
+  el.cal.disabled        = !on || state.busy;
+}
+
+/* Strip characters that would break a ZPL ^FD field */
+function clean(s){
+  return String(s ?? "")
+    .replace(/[\r\n\t]/g, " ")
+    .replace(/[\^~\\]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/* ==========================================================
+   LAYOUT MODEL — shared by preview and ZPL so they never differ
+   ========================================================== */
+function readInputs(){
+  return {
+    mrp:       clean(el.mrp.value),
+    code:      clean(el.code.value),
+    qty:       parseInt(el.qty.value, 10) || 1,
+    darkness:  parseInt(el.darkness.value, 10) || 20,
+    large:     el.fontsize.value === "large",
+    storeline: el.storeline.value
+  };
+}
+
+/* Largest font height that keeps `text` inside `maxWidth` dots */
+function fitFont(text, maxWidth, maxH, minH){
+  const n = Math.max(text.length, 1);
+  return Math.max(minH, Math.min(maxH, Math.floor(maxWidth / (n * 0.56))));
+}
+
+function buildLayout(inp){
+  const mrpText  = "MRP : "  + (inp.mrp  || "₹___");
+  const codeText = "CODE : " + (inp.code || "______");
+
+  const mrpH  = inp.large ? 44 : 36;
+  const codeH = fitFont(codeText, LABEL_W - 12, 30, 15);
+
+  const items = [];
+  let y = 10;
+
+  items.push({ y:y, h:26, text:"SEZINS KIDS WEAR", weight:900 }); y += 26 + 4;  // 10 → 40
+  items.push({ y:y, h:18, text:"MOOSABOWLI",       weight:700 }); y += 18 + 8;  // 40 → 66
+  items.push({ y:y, h:mrpH, text:mrpText,          weight:900 }); y += mrpH + 6;
+  items.push({ y:y, h:codeH, text:codeText,        weight:800 });
+
+  items.push({ type:"rule", x:22, y:172, w:362, h:2 });
+  if(inp.storeline){
+    items.push({ y:179, h:12, text:inp.storeline, weight:700 });
+  }
+  return items;
+}
+
+/* ==========================================================
+   ZPL
+   ========================================================== */
+function zplField(it){
+  return "^FO0," + it.y + "^A0N," + it.h + "," + it.h +
+         "^FB" + LABEL_W + ",1,0,C,0^FD" + clean(it.text) + "^FS";
+}
+function zplRule(it){
+  return "^FO" + it.x + "," + it.y + "^GB" + it.w + "," + it.h + "," + it.h + "^FS";
+}
+
+function toZPL(layout, opts){
+  return [
+    "~SD" + opts.darkness,
+    "^XA",
+    "^PW" + LABEL_W,
+    "^LL" + LABEL_H,
+    "^LH0,0",
+    "^CI28",
+    ...layout.map(it => it.type === "rule" ? zplRule(it) : zplField(it)),
+    "^PQ" + opts.qty,
+    "^XZ"
+  ].join("\r\n");
+}
+
+function testZPL(darkness){
+  return [
+    "~SD" + darkness,
+    "^XA",
+    "^PW" + LABEL_W,
+    "^LL" + LABEL_H,
+    "^LH0,0",
+    "^CI28",
+    "^FO0,26^A0N,30,30^FB406,1,0,C,0^FDPRINTER TEST^FS",
+    "^FO0,74^A0N,24,24^FB406,1,0,C,0^FDSEZINS KIDS WEAR^FS",
+    "^FO0,112^A0N,20,20^FB406,1,0,C,0^FD2 x 1 INCH / 203 dpi^FS",
+    "^FO0,158^GB406,5,5^FS",
+    "^PQ1",
+    "^XZ"
+  ].join("\r\n");
+}
+
+/* ==========================================================
+   LIVE PREVIEW
+   ========================================================== */
+let raf = 0;
+function renderPreview(){
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(() => {
+    const w = el.preview.clientWidth;
+    if(!w) return;
+
+    const layout = buildLayout(readInputs());
+    const frag = document.createDocumentFragment();
+
+    for(const it of layout){
+      const d = document.createElement("div");
+      if(it.type === "rule"){
+        d.className = "r";
+        d.style.cssText = "left:" + it.x + "px;top:" + it.y +
+                          "px;width:" + it.w + "px;height:" + it.h + "px";
+      }else{
+        d.className = "t";
+        d.style.cssText = "top:" + it.y + "px;font-size:" + it.h +
+                          "px;font-weight:" + (it.weight || 400);
+        d.textContent = it.text;
+      }
+      frag.appendChild(d);
+    }
+
+    el.plabel.innerHTML = "";
+    el.plabel.appendChild(frag);
+    el.plabel.style.transform = "scale(" + (w / LABEL_W) + ")";
+  });
+}
+
+/* ==========================================================
+   LOCAL STORAGE — settings
+   ========================================================== */
+function saveSettings(){
+  try{
+    localStorage.setItem(LS_SET, JSON.stringify({
+      mrp: el.mrp.value, code: el.code.value, qty: el.qty.value,
+      darkness: el.darkness.value, fontsize: el.fontsize.value,
+      storeline: el.storeline.value, autoInc: el.autoInc.checked
+    }));
+  }catch(_){}
+}
+function loadSettings(){
+  try{
+    const s = JSON.parse(localStorage.getItem(LS_SET) || "{}");
+    if(s.mrp       != null) el.mrp.value       = s.mrp;
+    if(s.code      != null) el.code.value      = s.code;
+    if(s.qty       != null) el.qty.value       = s.qty;
+    if(s.darkness  != null) el.darkness.value  = s.darkness;
+    if(s.fontsize  != null) el.fontsize.value  = s.fontsize;
+    if(s.storeline != null) el.storeline.value = s.storeline;
+    if(s.autoInc   != null) el.autoInc.checked = !!s.autoInc;
+  }catch(_){}
+}
+
+/* ==========================================================
+   LOCAL STORAGE — history
+   ========================================================== */
+function getHistory(){
+  try{ return JSON.parse(localStorage.getItem(LS_HIST) || "[]"); }catch(_){ return []; }
+}
+function saveHistory(list){
+  try{ localStorage.setItem(LS_HIST, JSON.stringify(list.slice(0, MAX_HIST))); }catch(_){}
+}
+function addHistory(inp){
+  const list = getHistory().filter(h => !(h.mrp === inp.mrp && h.code === inp.code));
+  list.unshift({ mrp:inp.mrp, code:inp.code, qty:inp.qty, at:Date.now() });
+  saveHistory(list);
+  renderHistory();
+}
+function renderHistory(){
+  const list = getHistory();
+  el.histCard.classList.toggle("hidden", list.length === 0);
+  el.histList.innerHTML = "";
+
+  for(const h of list){
+    const li = document.createElement("li");
+    li.tabIndex = 0;
+
+    const m = document.createElement("span");
+    m.className = "m";
+    m.textContent = h.code + "  ·  " + h.mrp;
+
+    const d = document.createElement("span");
+    d.className = "d";
+    d.textContent = new Date(h.at).toLocaleDateString(undefined, { day:"2-digit", month:"short" });
+
+    li.append(m, d);
+
+    const refill = () => {
+      el.mrp.value  = h.mrp;
+      el.code.value = h.code;
+      el.qty.value  = String(h.qty || 2);
+      saveSettings();
+      renderPreview();
+      clearMessage();
+      window.scrollTo({ top:0, behavior:"smooth" });
+    };
+    li.addEventListener("click", refill);
+    li.addEventListener("keydown", e => {
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); refill(); }
+    });
+
+    el.histList.appendChild(li);
+  }
+}
+
+/* ==========================================================
+   WEBUSB — connect
+   ========================================================== */
+async function claimPrinter(device){
+  await device.open();
+  if(!device.configuration) await device.selectConfiguration(1);
+
+  for(const iface of device.configuration.interfaces){
+    for(const alt of iface.alternates){
+      const out = alt.endpoints.find(e => e.direction === "out" && e.type === "bulk")
+               || alt.endpoints.find(e => e.direction === "out");
+      if(!out) continue;
+
+      try{ await device.claimInterface(iface.interfaceNumber); }
+      catch(_){ /* already claimed — keep going */ }
+
+      if(alt.alternateSetting !== 0){
+        try{ await device.selectAlternateInterface(iface.interfaceNumber, alt.alternateSetting); }
+        catch(_){}
+      }
+      return { iface: iface.interfaceNumber, endpoint: out.endpointNumber };
+    }
+  }
+  throw new Error("No USB OUT endpoint found on this device.");
+}
+
+async function attachDevice(device){
+  const { iface, endpoint } = await claimPrinter(device);
+  state.device   = device;
+  state.endpoint = endpoint;
+  state.iface    = iface;
+
+  el.printer.textContent = device.productName || "Zebra printer";
+  setConnected(true);
+  message("Printer connected. Ready to print.", "ok", 3500);
+}
+
+async function connectPrinter(anyDevice){
+  if(!navigator.usb){
+    el.unsupported.classList.remove("hidden");
+    message("WebUSB is not supported in this browser.", "err");
+    return;
+  }
+  if(!window.isSecureContext){
+    message("WebUSB needs an https:// page (or localhost).\nOpen this file from a hosted address.", "err");
+    return;
+  }
+
+  try{
+    el.connect.disabled = true;
+    message("Opening the USB device chooser…");
+
+    const filters = anyDevice ? [] : [{ vendorId: ZEBRA_VID }];
+    const device  = await navigator.usb.requestDevice({ filters });
+    await attachDevice(device);
+
+  }catch(err){
+    if(err && err.name === "NotFoundError"){
+      clearMessage();                       // user cancelled the chooser
+    }else{
+      console.error(err);
+      message("Connection failed: " + (err.message || err), "err");
+    }
+    setConnected(false);
+  }finally{
+    el.connect.disabled = state.device != null;
+  }
+}
+
+async function autoReconnect(){
+  if(!navigator.usb) return;
+  try{
+    const devices = await navigator.usb.getDevices();
+    const device  = devices.find(d => d.vendorId === ZEBRA_VID) || devices[0];
+    if(device) await attachDevice(device);
+  }catch(_){ setConnected(false); }
+}
+
+async function disconnectPrinter(silent){
+  try{
+    if(state.device && state.device.opened){
+      try{ await state.device.releaseInterface(state.iface); }catch(_){}
+      await state.device.close();
+    }
+  }catch(_){}
+
+  state.device = state.endpoint = state.iface = null;
+  el.printer.textContent = "No printer";
+  setConnected(false);
+  if(!silent) message("Printer disconnected.", "info", 2500);
+}
+
+/* ==========================================================
+   WEBUSB — send
+   ========================================================== */
+async function sendZPL(text){
+  if(!state.device || !state.device.opened || state.endpoint === null){
+    throw new Error("Printer is not connected.");
+  }
+  const bytes = new TextEncoder().encode(text);
+  for(let off = 0; off < bytes.length; off += USB_CHUNK){
+    const res = await state.device.transferOut(state.endpoint, bytes.subarray(off, off + USB_CHUNK));
+    if(res.status !== "ok") throw new Error("USB transfer failed (" + res.status + ").");
+  }
+}
+
+/* ==========================================================
+   ACTIONS
+   ========================================================== */
+function bumpCode(value){
+  const m = value.match(/^(.*?)(\d+)$/);
+  if(!m) return value;
+  const digits = m[2];
+  const next   = String(parseInt(digits, 10) + 1).padStart(digits.length, "0");
+  return m[1] + next;
+}
+
+async function withBusy(button, label, fn){
+  if(state.busy) return;
+  state.busy = true;
+  setConnected(!!state.device);
+
+  const original = button.textContent;
+  button.textContent = label;
+
+  try{
+    await fn();
+  }catch(err){
+    console.error(err);
+    message("Failed: " + (err.message || err), "err");
+  }finally{
+    state.busy = false;
+    button.textContent = original;
+    setConnected(!!state.device);
+  }
+}
+
+function printLabel(){
+  const inp = readInputs();
+
+  if(!inp.mrp){ message("Please enter an MRP value.", "err"); el.mrp.focus(); return; }
+  if(!inp.code){ message("Please enter a code.", "err"); el.code.focus(); return; }
+
+  withBusy(el.print, "Printing…", async () => {
+    await sendZPL(toZPL(buildLayout(inp), inp));
+    message("Sent " + inp.qty + " label" + (inp.qty > 1 ? "s" : "") + " to the printer.", "ok", 4000);
+    addHistory(inp);
+
+    if(el.autoInc.checked){
+      el.code.value = bumpCode(el.code.value);
+      saveSettings();
+      renderPreview();
+    }
+  });
+}
+
+function testPrint(){
+  const inp = readInputs();
+  withBusy(el.test, "Sending…", async () => {
+    await sendZPL(testZPL(inp.darkness));
+    message("Test label sent. Check alignment and darkness.", "ok", 4000);
+  });
+}
+
+function calibrate(){
+  if(!state.device || !state.device.opened){
+    message("Connect the printer first.", "err");
+    return;
+  }
+  if(!confirm("Run media calibration?\n\nThe printer will feed a few labels to detect the gap.")) return;
+
+  withBusy(el.cal, "Calibrating…", async () => {
+    await sendZPL("~JC\r\n");
+    message("Calibration sent. The printer will feed a few labels.", "ok", 5000);
+  });
+}
+
+/* ==========================================================
+   SHARE — download a copy of this very file
+   ========================================================== */
+function saveCopy(){
+  const html = "<!doctype html>\n" + document.documentElement.outerHTML;
+  const blob = new Blob([html], { type:"text/html;charset=utf-8" });
+  const url  = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "sezins-zebra-label.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  message("File saved. Send it to anyone — they just open it in Chrome.", "ok", 5000);
+}
+
+/* ==========================================================
+   WIRING
+   ========================================================== */
+el.connect.addEventListener("click", () => connectPrinter(false));
+el.pairAny.addEventListener("click", () => connectPrinter(true));
+el.disconnect.addEventListener("click", () => disconnectPrinter(false));
+el.print.addEventListener("click", printLabel);
+el.test.addEventListener("click", testPrint);
+el.cal.addEventListener("click", calibrate);
+el.saveCopy.addEventListener("click", saveCopy);
+
+["input","change"].forEach(evt => {
+  [el.mrp, el.code, el.qty, el.darkness, el.fontsize, el.storeline].forEach(node => {
+    node.addEventListener(evt, () => { renderPreview(); saveSettings(); });
+  });
+});
+el.autoInc.addEventListener("change", saveSettings);
+
+[el.mrp, el.code].forEach(node => {
+  node.addEventListener("keydown", e => {
+    if(e.key === "Enter" && !el.print.disabled){ e.preventDefault(); printLabel(); }
+  });
+});
+
+el.clearHist.addEventListener("click", () => {
+  if(!confirm("Clear the recent labels list?")) return;
+  saveHistory([]);
+  renderHistory();
+});
+
+if(navigator.usb){
+  navigator.usb.addEventListener("disconnect", e => {
+    if(state.device && e.device === state.device){
+      state.device = state.endpoint = state.iface = null;
+      el.printer.textContent = "No printer";
+      setConnected(false);
+      message("Printer was unplugged from USB.", "err");
+    }
+  });
+}else{
+  el.unsupported.classList.remove("hidden");
+}
+
+if(window.ResizeObserver){
+  new ResizeObserver(renderPreview).observe(el.preview);
+}else{
+  window.addEventListener("resize", renderPreview);
+}
+
+/* ==========================================================
+   INIT
+   ========================================================== */
+loadSettings();
+renderHistory();
+setConnected(false);
+renderPreview();
+autoReconnect();
+
+})();
+</script>
+</body>
+</html>
+
+
+Please create an application for me 
